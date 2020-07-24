@@ -1,40 +1,44 @@
-import asyncio
+# discord 라이브러리 사용 선언
 import discord
 
-client = discord.Client()
 
-# 1-6에서 생성된 토큰을 이곳에 입력해주세요.
-token = "your_token"
+token = "MEgBaK-G2B81CcM60V60q8UQFY5R5MEd"
 
 
-# 봇이 구동되었을 때 동작되는 코드입니다.
-@client.event
-async def on_ready():
-    print("Logged in as ")  # 화면에 봇의 아이디, 닉네임이 출력됩니다.
-    print(client.user.name)
-    print(client.user.id)
-    print("===========")
-    # 디스코드에는 현재 본인이 어떤 게임을 플레이하는지 보여주는 기능이 있습니다.
-    # 이 기능을 사용하여 봇의 상태를 간단하게 출력해줄 수 있습니다.
-    await client.change_presence(game=discord.Game(name="반갑습니다 :D", type=1))
+class chatbot(discord.Client):
+    # 프로그램이 처음 실행되었을 때 초기 구성
+    async def on_ready(self):
+        # 상태 메시지 설정
+        # 종류는 3가지: Game, Streaming, CustomActivity
+        game = discord.Game("--상태창--")
+
+        # 계정 상태를 변경한다.
+        # 온라인 상태, game 중으로 설정
+        await client.change_presence(status=discord.Status.online, activity=game)
+
+        # 준비가 완료되면 콘솔 창에 "READY!"라고 표시
+        print("READY")
+
+    # 봇에 메시지가 오면 수행 될 액션
+    async def on_message(self, message):
+        # SENDER가 BOT일 경우 반응을 하지 않도록 한다.
+        if message.author.bot:
+            return None
+
+        # message.content = message의 내용
+        if message.content == "!바보":
+            # 현재 채널을 받아옴
+            channel = message.channel
+            # 답변 내용 구성
+            msg = "너도 바보"
+            # msg에 지정된 내용대로 메시지를 전송
+            await channel.send(msg)
+            return None
 
 
-# 봇이 새로운 메시지를 수신했을때 동작되는 코드입니다.
-@client.event
-async def on_message(message):
-    if message.author.bot:  # 만약 메시지를 보낸사람이 봇일 경우에는
-        return None  # 동작하지 않고 무시합니다.
-
-    id = message.author.id  # id라는 변수에는 메시지를 보낸사람의 ID를 담습니다.
-    channel = message.channel  # channel이라는 변수에는 메시지를 받은 채널의 ID를 담습니다.
-
-    if message.content.startswith("!커맨드"):  # 만약 해당 메시지가 '!커맨드' 로 시작하는 경우에는
-        await client.send_message(channel, "커맨드")  # 봇은 해당 채널에 '커맨드' 라고 말합니다.
-    else:  # 위의 if에 해당되지 않는 경우
-        # 메시지를 보낸사람을 호출하며 말한 메시지 내용을 그대로 출력해줍니다.
-        await client.send_message(
-            channel, "<@" + id + '>님이 "' + message.content + '"라고 말하였습니다.'
-        )
-
-
-client.run(token)
+# 프로그램이 실행되면 제일 처음으로 실행되는 함수
+if __name__ == "__main__":
+    # 객체를 생성
+    client = chatbot()
+    # TOKEN 값을 통해 로그인하고 봇을 실행
+    client.run("NTA4MjQ3MjE0NjU3ODk2NDU5.W92MGg.tjwCmnxZjwRNyEDi50KqGsdszao")
