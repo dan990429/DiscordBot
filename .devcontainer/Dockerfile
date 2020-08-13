@@ -45,17 +45,19 @@ ENV MAVEN_HOME /usr/share/maven
 ENV MAVEN_CONFIG /root/.m2
 #-------------------------------------------------------------------------------------------------------------
 
-#-------------------Uncomment the following steps to install Gradle CLI Tools---------------------------------
-# ENV GRADLE_HOME /opt/gradle
-# ENV GRADLE_VERSION 5.4.1
-# ARG GRADLE_DOWNLOAD_SHA256=7bdbad1e4f54f13c8a78abc00c26d44dd8709d4aedb704d913fb1bb78ac025dc
-# RUN curl -sSL --output gradle.zip "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
-#     && export DEBIAN_FRONTEND=noninteractive \
-#     && echo "${GRADLE_DOWNLOAD_SHA256} *gradle.zip" | sha256sum --check - \
-#     && unzip gradle.zip \
-#     && rm gradle.zip \
-#     && mv "gradle-${GRADLE_VERSION}" "${GRADLE_HOME}/" \
-#     && ln -s "${GRADLE_HOME}/bin/gradle" /usr/bin/gradle
+#-------------------Install Go Autoupload github-release------------------------------------------------------
+RUN mkdir -p /usr/share/go \
+    && curl -fsSL -o /tmp/go.tar.gz https://dl.google.com/go/go1.12.1.linux-amd64.tar.gz \
+    && tar -xzf /tmp/go.tar.gz -C /usr/share/go --strip-components=1 \
+    && rm -f /tmp/go.tar.gz \
+    && ln -s /usr/share/go/bin/go /usr/bin/go
+ENV GOPATH=$HOME/go
+ENV GOBIN=$GOPATH/bin
+ENV PATH=$PATH:/usr/share/go/bin:$GOBIN
+#-------------------------------------------------------------------------------------------------------------
+
+#--------------------Github-release to Upload file------------------------------------------------------------
+RUN go get github.com/github-release/github-release
 #-------------------------------------------------------------------------------------------------------------
 
 # Clean up
